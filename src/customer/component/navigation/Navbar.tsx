@@ -6,6 +6,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import StorefrontIcon from '@mui/icons-material/Storefront';
+import CategorySheet from './CategorySheet';
+import { mainCategory } from 'data/category/mainCategory';
 
 
 const Navbar = () => {
@@ -15,7 +17,7 @@ const Navbar = () => {
 
   return (
     <>
-        <Box>
+        <Box sx={{ zIndex: 2 }} className='sticky top-0 left-0 right-0 bg-white '>
             <div className='flex justify-between items-center px-5 lg:px-20 h-[70px] border-b'>
                 <div className='flex items-center gap-9'>
                     <div className='flex items-center gap-2'>
@@ -29,10 +31,10 @@ const Navbar = () => {
                             Green Shopping
                         </h1>
                         <ul className='flex items-center font-medium text-gray-800'>
-                            {['Home', 'Products', 'About Us', 'Contact Us'].map((item) => 
+                            {mainCategory.map((item) => 
                             <li className='mainCategory hover:text-primary hover:border-b-2 
                                             h-[70px] px-4 border-primary flex items-center'>
-                                {item}
+                                {item.name}
                             </li>)}
                         </ul>
                     </div>
@@ -68,6 +70,9 @@ const Navbar = () => {
                         </Button>
                     }
                 </div>
+            </div>
+            <div className='categorySheet absolute top-[4.41rem] left-20 right-20 border'>
+                <CategorySheet />
             </div>
         </Box>
     </>

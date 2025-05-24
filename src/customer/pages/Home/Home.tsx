@@ -16,11 +16,6 @@ const Home = () => {
                 <h1 className='text-lg lg:text-4xl font-bold text-primary pb-5 lg:pb-10 text-center'>TODAY'S DEAL</h1>
                 <Deal />
             </div>
-            
-            <div className='pt-20'>
-                <h1 className='text-lg lg:text-4xl font-bold text-primary pb-5 lg:pb-20 text-center'>SHOP BY CATEGORY</h1>
-                <ShopByCategory />
-            </div>
             <section className='py-20'>
                 <h1 className='text-lg lg:text-4xl font-bold text-primary pb-5 lg:pb-20 text-center'>SHOP BY CATEGORY</h1>
                 <ShopByCategory />
