@@ -1,40 +1,70 @@
 import React from 'react'
-import { Avatar, Box, Button, IconButton } from '@mui/material'
+import { Avatar, Box, Button, IconButton, useMediaQuery, useTheme } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 
 
 const Navbar = () => {
+
+    const theme = useTheme();
+    const isLarge = useMediaQuery(theme.breakpoints.up('lg'));
+
   return (
     <>
         <Box>
             <div className='flex justify-between items-center px-5 lg:px-20 h-[70px] border-b'>
-                <div>
+                <div className='flex items-center gap-9'>
                     <div className='flex items-center gap-2'>
-                        <IconButton>
-                            <MenuIcon />
-                        </IconButton>
-                        <h1 className='logo cursor-pointer text-lg md:text-2xl text-[#00927c]'>
+                        {
+                            !isLarge &&  
+                            <IconButton>
+                                <MenuIcon />
+                            </IconButton>
+                        }
+                        <h1 className='logo cursor-pointer text-lg md:text-2xl text-primary'>
                             Green Shopping
                         </h1>
+                        <ul className='flex items-center font-medium text-gray-800'>
+                            {['Home', 'Products', 'About Us', 'Contact Us'].map((item) => 
+                            <li className='mainCategory hover:text-primary hover:border-b-2 
+                                            h-[70px] px-4 border-primary flex items-center'>
+                                {item}
+                            </li>)}
+                        </ul>
                     </div>
                 </div>
-                <div>
+                <div className='flex gap-1 lg:gap-4 items-center'>
                     <IconButton>
                         <SearchIcon />
                     </IconButton>
                     {
-                        true ? 
+                        false ? 
                         <Button className='flex items-center gap-2'> 
-                        <Avatar 
-                            src='data:image/png;base64,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' />
+                        <Avatar sx={{width: 29, hieght:29}} src='#'/>
+            
                             
                             <h1 className='font-semibold hidden lg:block'>Zosh</h1>
                         </Button> 
                         : 
                         <Button variant='contained'>
                             Login
+                        </Button>
+                    }
+                    <IconButton>
+                        <FavoriteBorder sx={{fontSize: 29}} />
+                    </IconButton>
+                    <IconButton>
+                        <AddShoppingCartIcon className='text-gray-700' sx={{fontSize: 29}} />
+                    </IconButton>
+                    
+                   {
+                    isLarge && 
+                        <Button startIcon={<StorefrontIcon/>} variant='outlined'>
+                            Become Seller
                         </Button>
                     }
                 </div>
