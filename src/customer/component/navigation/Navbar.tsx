@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Avatar, Box, Button, IconButton, useMediaQuery, useTheme } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
@@ -14,6 +14,8 @@ const Navbar = () => {
 
     const theme = useTheme();
     const isLarge = useMediaQuery(theme.breakpoints.up('lg'));
+    const [selectedCategory, setSelectedCategory] = useState("men");
+    const [showSheet, setShowSheet] = useState(false);
 
   return (
     <>
@@ -32,7 +34,14 @@ const Navbar = () => {
                         </h1>
                         <ul className='flex items-center font-medium text-gray-800'>
                             {mainCategory.map((item) => 
-                            <li className='mainCategory hover:text-primary hover:border-b-2 
+                            <li onMouseLeave={() =>{
+                                setShowSheet(false);
+                            }}
+                            onMouseEnter={() => {
+                                setSelectedCategory(item.categoryId);
+                                setShowSheet(true);
+                            }}
+                            className='mainCategory hover:text-primary hover:border-b-2 
                                             h-[70px] px-4 border-primary flex items-center'>
                                 {item.name}
                             </li>)}
@@ -71,9 +80,18 @@ const Navbar = () => {
                     }
                 </div>
             </div>
-            <div className='categorySheet absolute top-[4.41rem] left-20 right-20 border'>
-                <CategorySheet />
-            </div>
+            { showSheet && 
+                <div 
+                onMouseLeave={() => 
+                    setShowSheet(false)
+                }
+                onMouseEnter={() => 
+                    setShowSheet(true)
+                }
+                className='categorySheet absolute top-[4.41rem] left-20 right-20 border'>
+                    <CategorySheet selectedCategory={selectedCategory}/>
+                </div>
+            }
         </Box>
     </>
   )
