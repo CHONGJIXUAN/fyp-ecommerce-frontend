@@ -8,6 +8,11 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import WalletIcon from '@mui/icons-material/Wallet';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import SimilarProduct from './SimilarProduct';
+import Review from '../Review/Review';
+import ReviewCard from '../Review/ReviewCard';
 
 const ProductDetails = () => {
     const [Quantity, setQuantity] = React.useState(1);
@@ -85,8 +90,42 @@ const ProductDetails = () => {
                         </Button>
                     </div>
                 </div>
+                <div className='mt-12 flex items-center gap-5'>
+                    <Button 
+                        fullWidth
+                        sx={{py:"1rem"}} 
+                        variant='contained'
+                        startIcon= {<AddShoppingCartIcon />}>
+                        Add To Bag
+                    </Button>
+                    <Button 
+                        fullWidth
+                        variant='outlined'
+                        sx={{py:"1rem"}} 
+                        startIcon= {<FavoriteBorderIcon />}>
+                        Whish List
+                    </Button>
+                </div>
+                <div className='mt-5'>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                    Facere autem sapiente similique! Exercitationem laborum veniam </p>
+                </div>
+                <div className='mt-12 space-y-5'>
+                    <ReviewCard />
+                    <Divider />
+                </div>
             </section>
         </div>
+        
+        <div className='mt-20'>
+            <h1 className='text-lg font-bold'>
+                Similar Products
+            </h1>
+            <div className='pt-5'>
+                <SimilarProduct />
+            </div>
+        </div>
+
     </div>
   )
 }
