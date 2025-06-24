@@ -9,6 +9,7 @@ import Product from 'customer/pages/Product/Product';
 import ProductDetails from 'customer/pages/PageDetails/ProductDetails';
 import Review from 'customer/pages/Review/Review';
 import Cart from 'customer/pages/Cart/Cart';
+import Checkout from 'customer/pages/Checkout/Checkout';
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
           {/* <Product /> */}
           {/* <ProductDetails /> */}
           {/* <Review /> */}
-          <Cart />
+          {/* <Cart /> */}
+          <Checkout />
         </div>
         
       </ThemeProvider>
