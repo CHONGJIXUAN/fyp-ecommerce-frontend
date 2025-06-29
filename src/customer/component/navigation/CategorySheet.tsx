@@ -3,6 +3,7 @@ import { menLevel2 } from '../../../data/category/level two/menLevel2';
 import { menLevel3} from '../../../data/category/level three/menLevel3';
 import { Box, dividerClasses } from '@mui/material';
 import zIndex from '@mui/material/styles/zIndex';
+import { useNavigate } from 'react-router-dom';
 
 const categoryTwo:{[key:string]:any[]} = {
     men:menLevel2,
@@ -13,6 +14,7 @@ const categoryThree:{[key:string]:any[]} = {
 }
 
 const CategorySheet = ({selectedCategory}:any) => {
+    const navigate = useNavigate();
 
     const childCategory = (category: any, parentCategoryId: any) => {
         return category.filter((child: any) => child.parentCategoryId == parentCategoryId)
@@ -29,7 +31,7 @@ const CategorySheet = ({selectedCategory}:any) => {
                         {
                             childCategory(categoryThree[selectedCategory], item.categoryId).map((item: any) =>
                             <div>
-                                <li key={item.name} className='hover:text-primary cursor-pointer'>
+                                <li onClick={() => navigate("/products/"+item.categoryId)} key={item.name} className='hover:text-primary cursor-pointer'>
                                     {item.name}
                                 </li>   
                             </div>)
