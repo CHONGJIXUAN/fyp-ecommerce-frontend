@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { use, useState } from 'react'
 import CartItem from './CartItem'
 import LocalOfferIcon from '@mui/icons-material/LocalOffer'
 import { teal } from '@mui/material/colors'
@@ -6,10 +6,12 @@ import TextField from '@mui/material/TextField';
 import { Button, dividerClasses, IconButton } from '@mui/material';
 import Close from '@mui/icons-material/Close';
 import PricingCard from './PricingCard';
+import { useNavigate } from 'react-router-dom';
 
 
 const Cart = () => {
   const [couponCode, setCouponCode] = useState("");
+  const navigate = useNavigate();
   const handleChange = (e:any) => {
     setCouponCode(e.target.value);
   }
@@ -44,7 +46,7 @@ const Cart = () => {
                 <div className='border rounded-md'>
                       <PricingCard />
                       <div className='p-5'>
-                        <Button sx={{py:"11px"}} variant='contained' className='w-full'>Checkout</Button>
+                        <Button onClick={() => navigate("/checkout")} sx={{py:"11px"}} variant='contained' className='w-full'>Checkout</Button>
                       </div>
                 </div>
             </div>
