@@ -13,6 +13,8 @@ import Checkout from 'customer/pages/Checkout/Checkout';
 import Account from 'customer/pages/Account/Account';
 import { Route, Routes } from 'react-router-dom';
 import BecomeSeller from 'customer/pages/Become Seller/BecomeSeller';
+import SellerDashBoard from 'seller/pages/SellerDashBoard/SellerDashBoard';
+import AdminDashboard from 'admin/pages/Dashboard/AdminDashboard';
 
 function App() {
   return (
@@ -35,6 +37,8 @@ function App() {
             <Route path="/checkout" element={<Checkout/>} />
             <Route path="/account/*" element={<Account/>} />
             <Route path="/become-seller" element={<BecomeSeller/>} />
+            <Route path="/seller/*" element={<SellerDashBoard/>} />
+            <Route path="/admin/*" element={<AdminDashboard/>} />
           </Routes>
         </div>
         
