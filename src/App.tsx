@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Navbar from './customer/component/navigation/Navbar';
@@ -15,18 +15,20 @@ import { Route, Routes } from 'react-router-dom';
 import BecomeSeller from 'customer/pages/Become Seller/BecomeSeller';
 import SellerDashBoard from 'seller/pages/SellerDashBoard/SellerDashBoard';
 import AdminDashboard from 'admin/pages/Dashboard/AdminDashboard';
+import { fetchProducts } from 'State/fetchProduct';
+import { useAppDispatch } from 'State/Store';
+import { fetchSellerProfile } from 'State/seller/sellerSlice';
 
 function App() {
+  const dispatch =  useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchSellerProfile(localStorage.getItem("sellerJwt") || ""))
+  }, [])
+
   return (
       <ThemeProvider theme={customTheme}>
         <div>
-          {/*<Home />*/}
-          {/* <Product /> */}
-          {/* <ProductDetails /> */}
-          {/* <Review /> */}
-          {/* <Cart /> */}
-          {/* <Checkout /> */}
-          {/* <Account /> */}
           <Navbar />
           <Routes>
             <Route path="/" element={<Home/>} />
