@@ -9,6 +9,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Form } from 'react-router-dom'
 import { mainCategory } from 'data/category/mainCategory'
 import { colors } from 'data/Filter/color'
+import { useAppDispatch } from 'State/Store'
+import { create } from 'domain'
+import { createProduct } from 'State/seller/sellerProductSlice'
+import { uploadToCoudinary } from 'Util/uploadToCloudinary'
 
 const categoryTwo: {[key: string]: any[] } = {
   men: menLevel2
@@ -24,29 +28,32 @@ const AddProduct = () => {
 
   const [snackbarOpen, setOpenSnackbar] = useState(false);
 
+  const dispatch = useAppDispatch();
+
   const formik = useFormik({
     initialValues: {
       title: '',
       description: '',
       sellingPrice: "",
-      quantity: "",
+      quantity: "", 
       color: "",
       images: [],
-      category: '',
-      category2: "",
-      category3: '',
+      bottomCategory: '',  
+      subCategory: '',
+      mainCategory: '',
       sizes: "",
     },
     onSubmit: (values) => {
       console.log('Form values:', values);
+      dispatch(createProduct({request:values,jwt:localStorage.getItem('sellerJwt')}))
     },
   })
 
   const handleImageChange = async (event: any) => {
     const file = event.target.files[0];
     setUploadImage(true);
-    //const image = await uploadToCoudinary(file);
-    //formik.setFieldValue('images', [...formik.values.images, image]);
+    const image = await uploadToCoudinary(file);
+    formik.setFieldValue('images', [...formik.values.images, image]);
     setUploadImage(false);
   }
 
@@ -90,31 +97,29 @@ const AddProduct = () => {
             </label>
 
             <div className='flex flex-wrap gap-2'>
-                {formik.values.images.map((image, index) => (
-                  <div className='relative'>
-                      <img
-                      className='w-24 h-24 object-cover'
-                      key={index}
-                      src={image} 
-                      alt={`ProductImage ${index + 1}`} 
-                      />
-                      <IconButton
-                        onClick={() => handleRemoveImage(index)}
-                        className="absolute top-0 right-0"
-                        size="small"
-                        color="error"
-                        sx={{
-                          position: 'absolute',
-                          top: 0,
-                          right: 0,
-                          outline: 'none',
-                        }}
-                      >
-                        <CloseIcon sx={{fontSize: "1rem"}} />
-                      </IconButton>
-                  </div>
-
-                  ))}
+              {formik.values.images.map((image, index) => (
+                <div className='relative' key={index}>
+                  <img
+                    className='w-24 h-24 object-cover'
+                    src={image}
+                    alt={`ProductImage ${index + 1}`}
+                  />
+                  <IconButton
+                    onClick={() => handleRemoveImage(index)}
+                    className="absolute top-0 right-0"
+                    size="small"
+                    color="error"
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                      outline: 'none',
+                    }}
+                  >
+                    <CloseIcon sx={{ fontSize: "1rem" }} />
+                  </IconButton>
+                </div>
+              ))}
             </div>
 
           </Grid>
@@ -217,80 +222,78 @@ const AddProduct = () => {
                   )}
               </FormControl>
             </Grid>
-            <Grid size={{xs:12, md:4, lg:4}}>
-                <FormControl
-                  fullWidth
-                  error={formik.touched.category && Boolean(formik.errors.category)}
-                  required
+            <Grid size={{ xs: 12, md: 4, lg: 4 }}>
+              <FormControl
+                fullWidth
+                error={formik.touched.mainCategory && Boolean(formik.errors.mainCategory)}
+                required
+              >
+                <InputLabel id="category-label">Main Category</InputLabel>
+                <Select
+                  labelId="category-label"
+                  id="mainCategory"
+                  name="mainCategory" // ✅ Correct name
+                  value={formik.values.mainCategory}
+                  onChange={formik.handleChange}
+                  label="Main Category"
                 >
-                    <InputLabel id="category-label">Category</InputLabel>
-                    <Select 
-                      labelId="category-label" 
-                      id="category" 
-                      name="category" 
-                      value={formik.values.category}
-                      onChange={formik.handleChange}
-                      label="Category"
-                    >
-                      {mainCategory.map((item) => (
-                        <MenuItem value={item.categoryId}>{item.name}</MenuItem>
-                      ))}
-                    </Select>
-                </FormControl>
+                  {mainCategory.map((item) => (
+                    <MenuItem key={item.categoryId} value={item.categoryId}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
-            <Grid size={{xs:12, md:4, lg:4}}>
-                <FormControl
-                  fullWidth
-                  error={formik.touched.category && Boolean(formik.errors.category)}
-                  required
+            <Grid size={{ xs: 12, md: 4, lg: 4 }}>
+              <FormControl
+                fullWidth
+                error={formik.touched.subCategory && Boolean(formik.errors.subCategory)}
+                required
+              >
+                <InputLabel id="subCategory-label">Second Category</InputLabel>
+                <Select
+                  labelId="subCategory-label"
+                  id="subCategory"
+                  name="subCategory" // ✅ FIXED: was "category2"
+                  value={formik.values.subCategory}
+                  onChange={formik.handleChange}
+                  label="Second Category"
                 >
-                    <InputLabel id="category2-label">Second Category</InputLabel>
-                    <Select 
-                      labelId="category2-label" 
-                      id="category2" 
-                      name="category2" 
-                      value={formik.values.category2}
-                      onChange={formik.handleChange}
-                      label="Second Category"
-                    >
-                      {formik.values.category && categoryTwo[formik.values.category]?.map((item) => (
+                  {formik.values.mainCategory &&
+                    categoryTwo[formik.values.mainCategory]?.map((item) => (
+                      <MenuItem key={item.categoryId} value={item.categoryId}>
+                        {item.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12, md: 4, lg: 4 }}>
+              <FormControl
+                fullWidth
+                error={formik.touched.bottomCategory && Boolean(formik.errors.bottomCategory)}
+                required
+              >
+                <InputLabel id="bottomCategory-label">Third Category</InputLabel>
+                <Select
+                  labelId="bottomCategory-label"
+                  id="bottomCategory"
+                  name="bottomCategory" // ✅ FIXED: was "category3"
+                  value={formik.values.bottomCategory}
+                  onChange={formik.handleChange}
+                  label="Third Category"
+                >
+                  {formik.values.subCategory &&
+                    childCategory(categoryThree[formik.values.mainCategory], formik.values.subCategory)?.map(
+                      (item: any) => (
                         <MenuItem key={item.categoryId} value={item.categoryId}>
                           {item.name}
                         </MenuItem>
-                      ))}
-                    </Select>
-                    {formik.touched.category && formik.errors.category && (
-                      <FormHelperText>{formik.errors.category}</FormHelperText>
+                      )
                     )}
-                </FormControl>
-            </Grid>
-            <Grid size={{xs:12, md:4, lg:4}}>
-                <FormControl
-                  fullWidth
-                  error={formik.touched.category && Boolean(formik.errors.category)}
-                  required
-                >
-                    <InputLabel id="category3-label">Third Category</InputLabel>
-                    <Select 
-                      labelId="category3-label" 
-                      id="category3" 
-                      name="category3" 
-                      value={formik.values.category3}
-                      onChange={formik.handleChange}
-                      label="Third Category"
-                    >
-                      {formik.values.category2 && childCategory(categoryThree[formik.values.category], 
-                      formik.values.category2
-                      )?.map((item: any) => (
-                        <MenuItem key={item.categoryId} value={item.categoryId}>
-                          {item.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {formik.touched.category && formik.errors.category && (
-                      <FormHelperText>{formik.errors.category}</FormHelperText>
-                    )}
-                </FormControl>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid size={{xs:12}}>
               <Button
