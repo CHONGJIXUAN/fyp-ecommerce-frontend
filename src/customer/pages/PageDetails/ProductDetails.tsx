@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import StarIcon from '@mui/icons-material/Star';
 import { green, teal, yellow } from '@mui/material/colors';
 import { Button, Divider } from '@mui/material';
@@ -13,29 +13,42 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import SimilarProduct from './SimilarProduct';
 import Review from '../Review/Review';
 import ReviewCard from '../Review/ReviewCard';
+import { useAppDispatch, useAppSelector } from 'State/Store';
+import { useParams } from 'react-router-dom';
+import { fetchProductById } from 'State/customer/ProductSlice';
 
 const ProductDetails = () => {
     const [Quantity, setQuantity] = React.useState(1);
+    const dispatch = useAppDispatch();
+    const {productId} = useParams();
+    const {product} = useAppSelector((store) => store);
+    const [activeImage, setActiveImage] = useState(0);
+
+    useEffect(() => {
+        dispatch(fetchProductById(productId));
+    },[productId])
+
+    const handleActiveImage = (value:number)=> () => {
+        setActiveImage(value)
+    }
 
   return (
     <div className='px-5 lg:px-20 pt-10'>
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-10'>
             <section className='flex flex-col lg:flex-row gap-5'>
                 <div className='w-full lg:w-[15%] flex flex-wrap lg:flex-col gap-3'>
-                    {[1,1,1,1].map((item) => 
-                    <img className='lg:w-full w-[50] cursor-pointer rounded-md' 
-                    src='https://encrypted-tbn0.gstatic.com/images?q=tbn:
-                    ANd9GcQDhkr35yQ5Y04nEF5mPOrlixrhmciArREiDseFTUedeMoLWweZfOdDemGRoURFFHzuPz8&usqp=CAU'/>)} 
+                    {product.product?.images.map((item, index) => 
+                    <img onClick={handleActiveImage(index)} className='lg:w-full w-[50] cursor-pointer rounded-md' 
+                    src={item} />)} 
                 </div>
                 <div className='w-full lg:w-[85%]'>
                     <img className="w-full rounded-md" 
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDhkr35yQ5Y04nEF5mPOrlixrhmciAr
-                    REiDseFTUedeMoLWweZfOdDemGRoURFFHzuPz8&usqp=CAU" alt="" />
+                    src={product.product?.images[activeImage]} alt="" />
                 </div>
             </section>
             <section>
-                <h1 className='font-bold text-lg text-primary'>Adidas</h1>
-                <p className='text-gray-500 font-semibold'>Men Shirt</p>
+                <h1 className='font-bold text-lg text-primary'>{product.product?.seller?.businessDetails.businessName}</h1>
+                <p className='text-gray-500 font-semibold'>{product.product?.title}</p>
                 <div className='flex justify-between items-center py-2 border w-[180px] px-3 mt-5'>
                     <div className='flex gap-1 items-center'>
                         <span>4</span>
@@ -49,13 +62,13 @@ const ProductDetails = () => {
                 <div>
                     <div className='price flex items-center gap-3 mt-5 text-2xl'>
                         <span className="font-sans text-gray-800">
-                            RM 40
+                            RM {product.product?.sellingPrice}
                         </span>
-                        <span className="line-through text-gray-400">
+                        {/* <span className="line-through text-gray-400">
                             RM 100
-                        </span>
+                        </span> */}
                         <span className='text-primary font-semibold'>
-                            60% off
+                            {product.product?.discountPercent}%
                         </span>
                     </div>
                     <p className='text-sm'>Inclusive of all taxes. Free Shipping above RM 100.</p>
@@ -107,8 +120,7 @@ const ProductDetails = () => {
                     </Button>
                 </div>
                 <div className='mt-5'>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                    Facere autem sapiente similique! Exercitationem laborum veniam </p>
+                    <p>{product.product?.description}</p>
                 </div>
                 <div className='mt-12 space-y-5'>
                     <ReviewCard />

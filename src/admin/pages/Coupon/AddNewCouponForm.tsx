@@ -8,7 +8,7 @@ import { Box, Button, Grid, TextField } from '@mui/material';
 
 interface CouponFormValues {
   code: string;
-  discountPercentage: number;
+  discountPercent: number;
   validityStartDate: Dayjs | null;
   validityEndDate: Dayjs | null;
   minimumOrderValue: number;
@@ -18,7 +18,7 @@ const AddNewCouponForm = () => {
   const formik = useFormik<CouponFormValues>({
     initialValues: {
       code: '',
-      discountPercentage: 0,
+      discountPercent: 0,
       validityStartDate: null,
       validityEndDate: null,
       minimumOrderValue: 0,
@@ -53,12 +53,12 @@ const AddNewCouponForm = () => {
                 <Grid size={{xs:12, sm:6}}>
                     <TextField 
                       fullWidth
-                      name='discountPercentage'
+                      name='discountPercent'
                       label="Coupon Discount Percentage"
-                      value={formik.values.discountPercentage}
+                      value={formik.values.discountPercent}
                       onChange={formik.handleChange}
-                      error={formik.touched.discountPercentage && Boolean(formik.errors.discountPercentage)}
-                      helperText={formik.touched.discountPercentage && formik.errors.discountPercentage}
+                      error={formik.touched.discountPercent && Boolean(formik.errors.discountPercent)}
+                      helperText={formik.touched.discountPercent && formik.errors.discountPercent}
                     />
                 </Grid>
                 <Grid size={{xs:12, sm:6}}>

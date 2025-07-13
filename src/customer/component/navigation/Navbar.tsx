@@ -55,7 +55,7 @@ const Navbar = () => {
                         <SearchIcon />
                     </IconButton>
                     {
-                        true ? 
+                        false ? 
                         <Button onClick={() => navigate("/account/orders")} className='flex items-center gap-2'> 
                         <Avatar sx={{width: 29, hieght:29}} src='#'/>
             
@@ -63,7 +63,7 @@ const Navbar = () => {
                             <h1 className='font-semibold hidden lg:block'>Zosh</h1>
                         </Button> 
                         : 
-                        <Button variant='contained'>
+                        <Button onClick={() => navigate("/login")} variant='contained'>
                             Login
                         </Button>
                     }
