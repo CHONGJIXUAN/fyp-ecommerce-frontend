@@ -1,6 +1,8 @@
-import { FormControl, InputLabel, MenuItem, Select, Table, TableContainer, TableHead, TableRow, TableCell, Paper, TableBody, tableCellClasses, Button } from '@mui/material'
+import { FormControl, InputLabel, MenuItem, Select, Table, TableContainer, TableHead, TableRow, TableCell, Paper, TableBody, tableCellClasses, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
 import { styled } from '@mui/material/styles';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { deleteSeller, fetchAllSellers, updateSellerStatus } from 'State/seller/sellerSlice';
+import { useAppDispatch, useAppSelector } from 'State/Store';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -22,88 +24,110 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-// Dummy data for demonstration
-function createData(name: string, calories: string, fat: string, carbs: string, protein: string) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('12345', 'Product A', '123 Main St', 'Delivered', 'Update'),
-  createData('12346', 'Product B', '456 Elm St', 'Pending', 'Update'),
-];
-
 const accountStatusType = [
-  { status: 'PENDING_VERIFICATION', title: 'Pending Verification', description: 'Account is awaiting verification.' },
-  { status: 'ACTIVE', title: 'Active', description: 'Account is active and in good standing.' },
-  { status: 'SUSPENDED', title: 'Suspended', description: 'Account is temporarily suspended.' },
-  { status: 'DEACTIVATED', title: 'Deactivated', description: 'Account is deactivated.' },
-  { status: 'BANNED', title: 'Banned', description: 'Account is permanently banned due to violations.' },
-  { status: 'CLOSED', title: 'Closed', description: 'Account is permanently closed, possibly by user request.' },
+  { status: "PENDING_VERIFICATION", title: "Pending Verification" },
+  { status: "ACTIVE", title: "Active" },
+  { status: "SUSPENDED", title: "Suspended" },
+  { status: "DEACTIVATED", title: "Deactivated" },
+  { status: "CLOSED", title: "Closed" },
 ];
 
 const SellersTable = () => {
-  const [accountStatus, setAccountStatus] = useState("ACTIVE");
+  const dispatch = useAppDispatch();
+  const { sellers } = useAppSelector((state) => state.seller);
 
-  const handleChange = (event: any) => {
-    setAccountStatus(event.target.value);
+  const [open, setOpen] = useState(false);
+  const [selectedSeller, setSelectedSeller] = useState<any>(null);
+  const [status, setStatus] = useState("ACTIVE");
+
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt") || "";
+    dispatch(fetchAllSellers(jwt));
+  }, [dispatch]);
+
+  const handleEditClick = (seller: any) => {
+    setSelectedSeller(seller);
+    setStatus(seller.accountStatus);
+    setOpen(true);
   };
+
+  const handleSave = async () => {
+    if (selectedSeller) {
+      const jwt = localStorage.getItem("jwt") || "";
+      await dispatch(updateSellerStatus({ id: selectedSeller.id, status, jwt }));
+
+      if (status === "CLOSED") {
+        // Call delete API
+        await dispatch(deleteSeller({ id: selectedSeller.id, jwt }));
+      }
+
+      setOpen(false);
+    }
+  };
+
 
   return (
     <>
-      <div className='pb-5 w-60'>
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Account Status</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={accountStatus}
-            label="Account Status"
-            onChange={handleChange}
-          >
-            {accountStatusType.map((item) => (
-              <MenuItem key={item.status} value={item.status}>
-                {item.title}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </div>
-
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <Table>
           <TableHead>
             <TableRow>
-              <StyledTableCell>Seller Name</StyledTableCell>
-              <StyledTableCell>Email</StyledTableCell>
-              <StyledTableCell align="right">Mobile</StyledTableCell>
-              <StyledTableCell align="right">SSM</StyledTableCell>
-              <StyledTableCell align="right">Business Name</StyledTableCell>
-              <StyledTableCell align="right">Account Status</StyledTableCell>
-              <StyledTableCell align="right">Change Status</StyledTableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell align="right">Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.name}>
-                <StyledTableCell component="th" scope="row">
-                  {row.name}
-                </StyledTableCell>
-                <StyledTableCell>{row.calories}</StyledTableCell>
-                <StyledTableCell align="right">{row.fat}</StyledTableCell>
-                <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-                <StyledTableCell align="right">{row.protein}</StyledTableCell>
-                <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-                <StyledTableCell align="right">
-                  <Button>Change</Button>
-                </StyledTableCell>
-              </StyledTableRow>
+            {sellers.map((seller: any) => (
+              <TableRow key={seller.id}>
+                <TableCell>{seller.sellerName}</TableCell>
+                <TableCell>{seller.email}</TableCell>
+                <TableCell>{seller.accountStatus}</TableCell>
+                <TableCell align="right">
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleEditClick(seller)}
+                  >
+                    Edit Status
+                  </Button>
+                </TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Edit Dialog */}
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth className="mt-20">
+        <DialogTitle>Update Seller Status</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth sx={{ mt: 2 }}>
+            <InputLabel id="status-label">Status</InputLabel>
+            <Select
+              labelId="status-label"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              label="Status"
+            >
+              {accountStatusType.map((option) => (
+                <MenuItem key={option.status} value={option.status}>
+                  {option.title}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={handleSave} variant="contained" color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
-    
-  )
-}
+  );
+};
+
 
 export default SellersTable

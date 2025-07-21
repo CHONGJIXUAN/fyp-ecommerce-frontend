@@ -19,14 +19,22 @@ import { fetchProducts } from 'State/fetchProduct';
 import store, { useAppDispatch, useAppSelector } from 'State/Store';
 import { fetchSellerProfile } from 'State/seller/sellerSlice';
 import Auth from 'customer/pages/Auth/Auth';
+import { fetchUserProfile } from 'State/AuthSlice';
+import PaymentSuccess from 'customer/pages/PaymentSuccess';
+import Wishlist from 'customer/pages/Wishlist/Wishlist';
+import { createHomeCategories } from 'State/customer/customerSlice';
+import { homeCategories } from 'data/HomeCategories';
+import SearchResults from 'customer/pages/Home/SearchResults';
+
 
 function App() {
   const dispatch =  useAppDispatch();
-  const {seller} = useAppSelector(store => store);
+  const {seller, auth} = useAppSelector(store => store);
   const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchSellerProfile(localStorage.getItem("sellerJwt") || ""))
+    dispatch(createHomeCategories(homeCategories))
   }, [])
 
   useEffect(() => {
@@ -35,6 +43,10 @@ function App() {
     }
   }, [seller.profile]);
 
+  useEffect(() => {
+    dispatch(fetchUserProfile({jwt: auth.jwt || localStorage.getItem("jwt")}))
+  }, [auth.jwt])
+
   return (
       <ThemeProvider theme={customTheme}>
         <div>
@@ -42,15 +54,18 @@ function App() {
           <Routes>
             <Route path="/" element={<Home/>} />
             <Route path="/login" element={<Auth/>} />
-            <Route path="/products/:category" element={<Product/>} />
+            <Route path="/products" element={<Product />} />
             <Route path="/reviews/:productId" element={<Review/>} />
             <Route path="/product-details/:categoryId/:name/:productId" element={<ProductDetails/>} />
             <Route path="/cart" element={<Cart/>} />
+            <Route path="/wishlist" element={<Wishlist/>} />
             <Route path="/checkout" element={<Checkout/>} />
+            <Route path="/payment-success/:orderId" element={<PaymentSuccess/>} />
             <Route path="/account/*" element={<Account/>} />
             <Route path="/become-seller" element={<BecomeSeller/>} />
             <Route path="/seller/*" element={<SellerDashBoard/>} />
             <Route path="/admin/*" element={<AdminDashboard/>} />
+            <Route path="/search" element={<SearchResults />} />
           </Routes>
         </div>
         

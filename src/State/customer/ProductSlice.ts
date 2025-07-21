@@ -21,48 +21,47 @@ export const fetchProductById = createAsyncThunk<any, any>(
   }
 )
 
-export const searchProduct = createAsyncThunk(
-  "products/searchProduct",
+export const searchProducts = createAsyncThunk<Product[], string>(
+  "products/search",
   async (query, { rejectWithValue }) => {
     try {
-      const response = await api.get(`${API_URL}/search`, {
-        params: {
-            query,
-        },
-      });
-
-      const data = response.data
-      console.log("search product data: " + data)
-      return data;
-
-    } catch (error:any) {
-        console.log("error: " + error)
-      return rejectWithValue(error.message); 
+      const response = await api.get(`/products/search?query=${encodeURIComponent(query)}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue("Failed to fetch products");
     }
   }
-)
+);
 
-export const fetchAllProducts = createAsyncThunk<any, any>(
-  "products/fetchAllProducts",
-  async (params, { rejectWithValue }) => {
+export const fetchAllProducts = createAsyncThunk(
+  "products/fetchAll",
+  async (filters: any, { rejectWithValue }) => {
     try {
-      const response = await api.get(`${API_URL}/getAllProducts`,{
-        params:{
-            ...params,
-            pageNumber:params.pageNumber || 0
-        }
+      const response = await api.get("/products/getAllProducts", {
+        params: filters 
       });
-
-      const data = response.data
-      console.log("All product data: " , data)
-      return data;
-
-    } catch (error:any) {
-        console.log("error: " + error)
-      return rejectWithValue(error.message); 
+      console.log("All Products Data:", response.data);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || "Failed to fetch products");
     }
   }
-)
+);
+
+export const updateUserProfile = createAsyncThunk(
+  "auth/updateUserProfile",
+  async ({ jwt, values }: { jwt: string; values: any }, { rejectWithValue }) => {
+    try {
+      const response = await api.put("/update-profile", values, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || "Failed to update profile");
+    }
+  }
+);
+
 
 interface ProductState{
     product: Product | null;
@@ -117,17 +116,17 @@ const productSlice = createSlice({
       state.error = action.payload;
     });
 
-    builder.addCase(searchProduct.pending, (state) => {
+    builder.addCase(searchProducts.pending, (state) => {
       state.loading = true;
       state.error = null;
     });
 
-    builder.addCase(searchProduct.fulfilled, (state, action) => {
+    builder.addCase(searchProducts.fulfilled, (state, action) => {
       state.loading = false;
-      state.product = action.payload;
+      state.products = action.payload;
     });
 
-    builder.addCase(searchProduct.rejected, (state, action) => {
+    builder.addCase(searchProducts.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
     });

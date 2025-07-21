@@ -1,22 +1,35 @@
 import { Box, Button, Divider } from '@mui/material'
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import OrderStepper from './OrderStepper';
 import PaymentsIcon from '@mui/icons-material/Payments';
+import { useAppDispatch, useAppSelector } from 'State/Store';
+import { cancelOrder, fetchOrderById, fetchOrderItemById } from 'State/customer/orderSlice';
 
 const OrderDetails = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const {orderId, orderItemId} = useParams();
+  const { currentOrder, orderItem, loading } = useAppSelector(state => state.order);
+
+  useEffect(() => {
+    if (orderId) {
+      dispatch(fetchOrderById({ orderId: Number(orderId), jwt: localStorage.getItem("jwt") || "" }));
+    }
+    if (orderItemId) {
+      dispatch(fetchOrderItemById({ orderItemId: Number(orderItemId), jwt: localStorage.getItem("jwt") || "" }));
+    }
+  }, [orderId, orderItemId, dispatch]);
     
   return (
     <Box className='space-y-5'>
         <section className='flex flex-col gap-5 justify-center items-center'>
-            <img className='w-[100px]' src="https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQ
-            wsVOi1OD2IfAh6l-qcKihclWRpc7JsGsy0T6Wd6kdUn0wGTn1nVk2I_qpGQ18DFqll8j78Y_x0BYmayxS3XXEGb1n
-            pBE0Zevuj8NyyursFYWqtohymDamBvk" alt="" />
+            <img className='w-[100px]'  src={orderItem?.product?.images?.[0] || currentOrder?.orderItems?.[0]?.product?.images?.[0] || ""} />
             <div className='text-sm space-y-1 text-center'>
-                <h1 className='font-bold'>{"Virant Clothing"}</h1>
-                <p>{"Face design resembles an aircraft cockpit instrument"}</p>
-                <p><strong>Size:</strong>M</p>
+                <h1 className='font-bold'>{orderItem?.product?.seller?.businessDetails?.businessName ||
+              currentOrder?.orderItems?.[0]?.product?.seller?.businessDetails?.businessName}</h1>
+                <p>{orderItem?.product?.title || currentOrder?.orderItems?.[0]?.product?.title}</p>
+                <p><strong>Size:</strong>{orderItem?.size || currentOrder?.orderItems?.[0]?.size}</p>
             </div>
             <div>
                 <Button onClick={() => navigate(`/reviews/${5}/create`)}>
@@ -25,29 +38,32 @@ const OrderDetails = () => {
             </div>
         </section>
         <section className='border p-5'>
-            <OrderStepper orderStatus={"SHIPPED"} />
+            <OrderStepper  orderStatus={currentOrder?.orderStatus || "PENDING"} />
         </section>
         <div className='border p-5'>
             <h1 className='font-bold pb-3'>Delivery Address</h1>
             <div className='text-sm space-y-2'>
                 <div className='flex gap-5 font-medium'>
-                    <p>{"Josh"}</p>
+                    <p>{currentOrder?.shippingAddress?.name || "N/A"}</p>
                     <Divider flexItem orientation='vertical'/>
-                    <p>{"0161234567"}</p>
+                    <p>{currentOrder?.shippingAddress?.mobile || "N/A"}</p>
                 </div>
-                <p>{"Address"}</p>
+                <p>{currentOrder?.shippingAddress?.fullAddress || "N/A"}</p>
+                <p>{currentOrder?.shippingAddress?.state || "N/A"}</p>
+                <p>{currentOrder?.shippingAddress?.city || "N/A"}</p>
+                <p>{currentOrder?.shippingAddress?.postCode || "N/A"}</p>
             </div>
         </div>
         <div className='border space-y-4'>
             <div className='flex justify-between text-sm pt-5 px-5'>
                 <div className='space-y-1'>
                     <p className='font-bold'>Total Item Price</p>
-                    <p>You saved <span className='text-green-500 font-medium text-sx'>
+                    {/* <p>You saved <span className='text-green-500 font-medium text-sx'>
                             Orders Price
                         </span> on this item
-                    </p>
+                    </p> */}
                 </div>
-                <p className='font-medium'>Selling Prices</p>
+                <p className='font-medium'>{currentOrder?.totalSellingPrice || "0"}</p>
             </div>
             <div className='px-5'>
                 <div className='bg-teal-50 px-5 py-2 text-xs font-medium flex items-center gap-3'>
@@ -58,12 +74,33 @@ const OrderDetails = () => {
             <Divider />
             <div className='px-5 pb-5'>
                 <p className='text-xs'>
-                    <strong>Sold By: </strong> Business Name
+                    <strong>Sold By: </strong> {orderItem?.product?.seller?.businessDetails?.businessName ||
+              currentOrder?.orderItems?.[0]?.product?.seller?.businessDetails?.businessName}
                 </p>
             </div>
             <div className='p-10'>
-                <Button disabled={true} color='error' sx={{py:"0.7rem"}} className='' variant='outlined' fullWidth>
-                    {false ? "Order Cancelled" : "Cancel Order"}
+                <Button
+                    disabled={currentOrder?.orderStatus === "CANCELLED" || currentOrder?.orderStatus === "DELIVERED"}
+                    color='error'
+                    sx={{ py: "0.7rem" }}
+                    variant='outlined'
+                    fullWidth
+                    onClick={() => {
+                    if (window.confirm("Are you sure you want to cancel this order?")) {
+                        const jwt = localStorage.getItem("jwt") || "";
+                        dispatch(cancelOrder({ jwt, orderId: currentOrder?.id }))
+                        .unwrap()
+                        .then(() => {
+                            alert("Order cancelled successfully!");
+                            navigate("/account/orders");
+                        })
+                        .catch(() => {
+                            alert("Failed to cancel order.");
+                        });
+                    }
+                    }}
+                >
+                    {currentOrder?.orderStatus === "CANCELLED" ? "Order Cancelled" : "Cancel Order"}
                 </Button>
             </div>
         </div>

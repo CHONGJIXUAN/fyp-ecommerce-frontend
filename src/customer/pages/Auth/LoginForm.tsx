@@ -1,11 +1,16 @@
-import { Button, TextField } from '@mui/material'
+import { Button, CircularProgress, TextField } from '@mui/material'
+import { sign } from 'crypto'
 import { useFormik } from 'formik'
-import React from 'react'
-import { sendLoginSignupOtp } from 'State/AuthSlice'
-import { useAppDispatch } from 'State/Store'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { sendLoginSignupOtp, signing, verifyOtp } from 'State/AuthSlice'
+import { useAppDispatch, useAppSelector } from 'State/Store'
 
 const LoginForm = () => {
     const dispatch = useAppDispatch()
+    const {auth} = useAppSelector(store => store)
+    const navigate = useNavigate()
+    const [otpStatus, setOtpStatus] = useState<string>("");
     
       const formik = useFormik({
         initialValues: {
@@ -19,16 +24,59 @@ const LoginForm = () => {
           } else if (!/\S+@\S+\.\S+/.test(values.email)) {
             errors.email = 'Email address is invalid'
           }
+          if (auth.otpSent && !values.otp) {
+            errors.otp = "OTP is required";
+          }
           return errors
         },
-        onSubmit: (values) => {
-          console.log('Form submitted:', values)
+        onSubmit: async (values) => {
+          if (otpStatus !== "OTP verified") {
+            alert("Please enter a valid OTP before login.");
+            return;
+          }
+
+          const result = await dispatch(signing(values));
+
+          if (signing.fulfilled.match(result)) {
+            console.log("Login successful!", result.payload);
+            navigate("/");
+          } else {
+            console.error("Login failed:", result.payload);
+            alert("Invalid credentials or OTP.");
+          }
         },
       })
 
       const handleSendOtp = () => {
-          dispatch(sendLoginSignupOtp({email:formik.values.email}))
+          if (!formik.values.email || formik.errors.email) {
+            alert("Please enter a valid email before requesting OTP.");
+            return;
+          }
+
+          dispatch(sendLoginSignupOtp({ email: formik.values.email }))
+            .unwrap()
+            .then(() => {
+              setOtpStatus("");
+            })
+            .catch(() => {
+              alert("Failed to send OTP. Try again.");
+            });
       }
+
+      const handleOtpChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        formik.setFieldValue("otp", e.target.value);
+
+        if (e.target.value.length === 6) {
+          try {
+            const result = await dispatch(
+              verifyOtp({ email: formik.values.email, otp: e.target.value })
+            ).unwrap();
+            setOtpStatus(result.message);
+          } catch (error: any) {
+            setOtpStatus(error);
+          }
+        }
+      };
       
   return (
     <div>
@@ -46,7 +94,7 @@ const LoginForm = () => {
             helperText={formik.touched.email && formik.errors.email}
             />
 
-            {true && 
+            {auth.otpSent && 
             <div className='space-y-2'>
                 <p className='font-medium text-sm opacity-40'>Enter Otp sent to your email</p>
                 <TextField 
@@ -55,18 +103,32 @@ const LoginForm = () => {
                 label="Otp"
                 value={formik.values.otp}
                 onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                error={formik.touched.otp && Boolean(formik.errors.otp)}
-                helperText={formik.touched.otp && formik.errors.otp}
+                onChange={handleOtpChange}
+                error={Boolean(otpStatus && otpStatus !== "OTP verified")}
+              helperText={otpStatus || (formik.touched.otp && formik.errors.otp)}
                 />
             </div>
             }
-            <Button onClick={handleSendOtp} fullWidth variant='contained' sx={{py: "11px"}}>
-            Send Otp
-            </Button>
-            <Button onClick={() => formik.handleSubmit()} fullWidth variant='contained' sx={{py: "11px"}}>
-            Login
-            </Button>
+            {auth.otpSent ? (
+              <Button 
+                onClick={() => formik.handleSubmit()} 
+                fullWidth 
+                variant='contained' 
+                sx={{ py: "11px" }}
+                
+              >
+                Login
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleSendOtp} 
+                fullWidth 
+                variant='contained' 
+                sx={{ py: "11px" }}
+              >
+                {auth.loading ? <CircularProgress /> : "Send otp"}
+              </Button>
+            )} 
         </div>
     </div>
   )

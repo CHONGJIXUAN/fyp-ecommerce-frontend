@@ -14,7 +14,7 @@ const Auth = () => {
 
           <div className='mt-8 px-10'>
             {
-              isLogin ? <LoginForm /> : <RegisterForm />
+              isLogin ? <LoginForm /> : <RegisterForm onRegisterSuccess={() => setIsLogin(true)} />
             }
 
             <div className='flex items-center justify-center mt-5 gap-1'>

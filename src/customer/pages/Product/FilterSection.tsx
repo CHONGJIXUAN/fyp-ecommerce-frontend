@@ -31,8 +31,6 @@ const FilterSection = () => {
         setSearchParams(searchParams);
     };
 
-
-
   return (
     <div className='-z-50 space-y-5 bg-white '>
         <div className='flex items-center justify-between h-[40px] px-9 lg:border-r'>
@@ -92,7 +90,7 @@ const FilterSection = () => {
                     </RadioGroup>
                 </FormControl>
             </section>
-            <section>
+            {/* <section>
                 <FormControl>
                     <FormLabel 
                     sx={{fontSize:"16px", fontWeight:"bold", color: green[800], pb:"14px"}} 
@@ -111,7 +109,7 @@ const FilterSection = () => {
                         />)}
                     </RadioGroup>
                 </FormControl>
-            </section>
+            </section> */}
         </div>
     </div>
   )

@@ -13,7 +13,7 @@ export interface Product{
     category?:Category;
     seller?:Seller;
     createdAt?:Date;
-    sizes:string;
+    sizes:string | string[];
 }
 
 interface Category{

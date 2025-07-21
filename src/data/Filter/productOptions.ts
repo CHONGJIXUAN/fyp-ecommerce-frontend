@@ -1,0 +1,1 @@
+export const sizesOptions = ["S", "M", "L", "XL", "XXL", "FREE"];
