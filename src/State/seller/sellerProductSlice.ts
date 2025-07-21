@@ -22,6 +22,30 @@ export const fetchSellerProducts = createAsyncThunk<Product[], any>(
     }
 )
 
+export const updateProduct = createAsyncThunk(
+  "sellerProducts/updateProduct",
+  async ({
+    jwt,
+    productId,
+    data,
+  }: {
+    jwt: string;
+    productId: number;
+    data: {
+      title: string;
+      sellingPrice: number;
+      color: string;
+      sizes: string[];
+      images: string[];
+    };
+  }) => {
+    const response = await api.put(`/sellers/products/${productId}`, data, {
+      headers: { Authorization: `Bearer ${jwt}` },
+    });
+    return response.data;
+  }
+);
+
 export const createProduct = createAsyncThunk<Product, { request: any, jwt: string | null }>(
   "/sellerProduct/createProduct",
   async (args, { rejectWithValue }) => {
@@ -85,6 +109,13 @@ const sellerProductSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
+        builder.addCase(updateProduct.fulfilled, (state, action) => {
+            const updatedProduct = action.payload;
+            const index = state.products.findIndex((p) => p.id === updatedProduct.id);
+            if (index !== -1) {
+            state.products[index] = updatedProduct;
+            }
+      });
     }
 })
 

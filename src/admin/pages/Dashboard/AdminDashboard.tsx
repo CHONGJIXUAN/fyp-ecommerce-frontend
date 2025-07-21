@@ -1,9 +1,16 @@
 import AdminSidebar from 'admin/components/AdminSidebar'
-import React from 'react'
+import React, { use, useEffect } from 'react'
 import AdminRoutes from 'Routes/AdminRoutes'
+import { fetchHomeCategories } from 'State/admin/adminSlice'
+import { useAppDispatch } from 'State/Store'
 
 const AdminDashboard = () => {
   const toggleSideBar = () => {}
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    dispatch(fetchHomeCategories())
+  },[])
 
   return (
     <div>

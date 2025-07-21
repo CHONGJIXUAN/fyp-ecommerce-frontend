@@ -1,7 +1,12 @@
 import Delete from '@mui/icons-material/Delete';
-import { FormControl, InputLabel, MenuItem, Select, Table, TableContainer, TableHead, TableRow, TableCell, Paper, TableBody, tableCellClasses, Button } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit';
+import { FormControl, InputLabel, MenuItem, Select, Table, TableContainer, TableHead, TableRow, TableCell, Paper, TableBody, tableCellClasses, Button, Dialog, DialogActions, DialogContent, TextField, DialogTitle, IconButton, CircularProgress } from '@mui/material'
 import { styled } from '@mui/material/styles';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import * as Yup from 'yup';
+import { deleteCoupon, fetchCoupons, updateCoupon } from 'State/customer/couponSlice';
+import { useAppDispatch, useAppSelector } from 'State/Store';
+import { useFormik } from 'formik';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -23,69 +28,120 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-// Dummy data for demonstration
-function createData(name: string, calories: string, fat: string, carbs: string, protein: string) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('12345', 'Product A', '123 Main St', 'Delivered', 'Update'),
-  createData('12346', 'Product B', '456 Elm St', 'Pending', 'Update'),
-];
-
-const accountStatusType = [
-  { status: 'PENDING_VERIFICATION', title: 'Pending Verification', description: 'Account is awaiting verification.' },
-  { status: 'ACTIVE', title: 'Active', description: 'Account is active and in good standing.' },
-  { status: 'SUSPENDED', title: 'Suspended', description: 'Account is temporarily suspended.' },
-  { status: 'DEACTIVATED', title: 'Deactivated', description: 'Account is deactivated.' },
-  { status: 'BANNED', title: 'Banned', description: 'Account is permanently banned due to violations.' },
-  { status: 'CLOSED', title: 'Closed', description: 'Account is permanently closed, possibly by user request.' },
-];
-
 const Coupon = () => {
-  const [accountStatus, setAccountStatus] = useState("ACTIVE");
+  const dispatch = useAppDispatch();
+  const { coupons, loading } = useAppSelector((state) => state.coupon);
+  const [open, setOpen] = useState(false);
+  const [selectedCoupon, setSelectedCoupon] = useState<any>(null);
 
-  const handleChange = (event: any) => {
-    setAccountStatus(event.target.value);
+  useEffect(() => {
+    dispatch(fetchCoupons());
+  }, [dispatch]);
+
+  const handleEditClick = (coupon: any) => {
+    setSelectedCoupon(coupon);
+    formik.setValues({
+      code: coupon.code,
+      discountPercentage: coupon.discountPercentage,
+      minimumOrderValue: coupon.minimumOrderValue,
+      status: coupon.status,
+    });
+    setOpen(true);
   };
+
+  const handleDelete = (id: number) => {
+    if (window.confirm("Delete this coupon?")) {
+      dispatch(deleteCoupon(id));
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+    setSelectedCoupon(null);
+  };
+
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      code: selectedCoupon?.code || "",
+      discountPercentage: selectedCoupon?.discountPercentage || 0,
+      minimumOrderValue: selectedCoupon?.minimumOrderValue || 0,
+      status: selectedCoupon?.status || "ACTIVE",
+    },
+    onSubmit: async (values) => {
+      if (selectedCoupon) {
+        await dispatch(updateCoupon({ id: selectedCoupon.id, updatedData: values }));
+        handleCloseDialog();
+      }
+    },
+  });
 
   return (
     <>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <Table>
           <TableHead>
             <TableRow>
-              <StyledTableCell>Coupon Code</StyledTableCell>
-              <StyledTableCell>Start Date</StyledTableCell>
-              <StyledTableCell>End Date</StyledTableCell>
-              <StyledTableCell align="right">Minimum Order Value</StyledTableCell>
-              <StyledTableCell align="right">Discount</StyledTableCell>
-              <StyledTableCell align="right">Delete</StyledTableCell>
+              <TableCell>Code</TableCell>
+              <TableCell>Discount (%)</TableCell>
+              <TableCell>Min Order Value</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Edit</TableCell>
+              <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.name}>
-                <StyledTableCell component="th" scope="row">
-                  {row.name}
-                </StyledTableCell>
-                <StyledTableCell>{row.calories}</StyledTableCell>
-                <StyledTableCell align="right">{row.fat}</StyledTableCell>
-                <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-                <StyledTableCell align="right">{row.protein}</StyledTableCell>
-                <StyledTableCell align="right">
-                  <Button>
+            {coupons.map((coupon) => (
+              <TableRow key={coupon.id}>
+                <TableCell>{coupon.code}</TableCell>
+                <TableCell>{coupon.discountPercentage}</TableCell>
+                <TableCell>{coupon.minimumOrderValue}</TableCell>
+                <TableCell>{coupon.status == "ACTIVE" ? "Active" : "Inactive"}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleEditClick(coupon)} color="primary">
+                    <EditIcon />
+                  </IconButton>
+                </TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleDelete(coupon.id)} sx={{ color: "red" }}>
                     <Delete />
-                  </Button>
-                </StyledTableCell>
-              </StyledTableRow>
+                  </IconButton>
+                </TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Edit Dialog */}
+      <Dialog open={open} onClose={handleCloseDialog} fullWidth>
+        <DialogTitle>Edit Coupon</DialogTitle>
+        <DialogContent>
+          <form onSubmit={formik.handleSubmit} className="space-y-4">
+            <TextField fullWidth name="code" label="Code" value={formik.values.code} disabled />
+            <TextField fullWidth name="discountPercentage" label="Discount" type="number" value={formik.values.discountPercentage} onChange={formik.handleChange} />
+            <TextField fullWidth name="minimumOrderValue" label="Min Order Value" type="number" value={formik.values.minimumOrderValue} onChange={formik.handleChange} />
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel>Status</InputLabel>
+              <Select
+                name="status"
+                value={formik.values.status}
+                onChange={formik.handleChange}
+              >
+                <MenuItem value="ACTIVE">Active</MenuItem>
+                <MenuItem value="INACTIVE">Inactive</MenuItem>
+              </Select>
+            </FormControl>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={formik.submitForm} variant="contained" color="primary">Save</Button>
+        </DialogActions>
+      </Dialog>
     </>
-    
-  )
-}
+  );
+};
+
 
 export default Coupon

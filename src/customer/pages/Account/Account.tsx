@@ -5,6 +5,9 @@ import Orders from './Orders'
 import OrderDetails from './OrderDetails'
 import UserDetails from './UserDetails'
 import Address from './Address'
+import { useAppDispatch } from 'State/Store'
+import { logout } from 'State/AuthSlice'
+import SavedCards from './SavedCards'
 
 const menu =[
     {name: 'Orders', path: '/account/orders'},
@@ -17,13 +20,21 @@ const menu =[
 const Account = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const handleClick = (item:any) => navigate(item.path);
+  const dispatch = useAppDispatch();  
+
+  const handleClick = (item: any) => {
+    if (item.path === "/") {
+      dispatch(logout(navigate));
+    } else {
+      navigate(item.path);
+    }
+  }
     
   return (
     <div className='px-5 lg:px-52 mig-h-screen mt-10'>
-        <div>
-            <h1 className='tsxt-xl font-bold pb-5'>Josh</h1>
-        </div>
+        {/* <div>
+            <h1 className='tsxt-xl font-bold pb-5'></h1>
+        </div> */}
         <Divider />
         <div className='grid grid-cols-1 lg:grid-cols-3 lg:min-h-[78vh]'>
             <section className='col-span-1 lg:border-r lg:pr-5 py-5 h-full'>
@@ -43,6 +54,7 @@ const Account = () => {
                     <Route path='/orders' element={<Orders/>} />
                     <Route path='/order/:orderId/:orderItemId' element={<OrderDetails/>} />
                     <Route path='/addresses' element={<Address/>} />
+                    <Route path='/saved-card' element={<SavedCards />} />
                 </Routes>
             </section>
         </div>

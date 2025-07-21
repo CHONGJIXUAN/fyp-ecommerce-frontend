@@ -1,12 +1,14 @@
 import { Button, TextField } from '@mui/material'
 import { useFormik } from 'formik'
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { sendLoginSignupOtp, signing } from 'State/AuthSlice'
 import { sellerLogin } from 'State/seller/SellerAuthSlice'
 import { useAppDispatch } from 'State/Store'
 
 const SellerLoginForm = () => {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const formik = useFormik({
     initialValues: {
@@ -25,6 +27,7 @@ const SellerLoginForm = () => {
     onSubmit: (values) => {
       console.log('Form submitted:', values)
       dispatch(sellerLogin({email: values.email, otp: values.otp }))
+      navigate("/become-seller")
     },
   })
 

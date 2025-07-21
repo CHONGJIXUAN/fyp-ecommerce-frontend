@@ -5,11 +5,14 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ModeComment from '@mui/icons-material/ModeComment';
 import { Product } from 'types/ProductTypes';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from 'State/Store';
+import { addProductToWishlist } from 'State/customer/wishlistSlice';
 
 const ProductCard = ({item}:{item:Product}) => {
     const [currentImage, setCurrentImage] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         let interval:any
@@ -23,6 +26,11 @@ const ProductCard = ({item}:{item:Product}) => {
         }
         return () => clearInterval(interval);
     },[isHovered])
+
+    const handleWishlist = (e: any) => {
+        e.stopPropagation();
+        item.id && dispatch(addProductToWishlist({productId: item.id || 1}))
+    }
 
   return (
     <>
@@ -42,11 +50,18 @@ const ProductCard = ({item}:{item:Product}) => {
                 { 
                     isHovered && <div className='indicator flex flex-col items-center space-y-2'>
                         <div className='flex gap-3'>
-                            <Button variant='contained' color='primary'>
+                            <Button onClick={(e) => handleWishlist(e)} variant='contained' color='primary'>
                                 <FavoriteIcon sx={{color:"green.800"}}/>
                             </Button>
-                            <Button variant='contained' color='primary'>
-                                <ModeComment sx={{color:"green.800"}}/>
+                            <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/reviews/${item.id}`);
+                            }}
+                            >
+                            <ModeComment sx={{ color: "green.800" }} />
                             </Button>
                         </div>
                     </div>
@@ -65,9 +80,9 @@ const ProductCard = ({item}:{item:Product}) => {
                     {/* <span className="thin-line-through text-gray-400">
                         RM {item.}
                     </span> */}
-                    <span className='text-primary font-semibold'>
+                    {/* <span className='text-primary font-semibold'>
                         {item.discountPercent}%
-                    </span>
+                    </span> */}
                 </div>
             </div>
         </div>

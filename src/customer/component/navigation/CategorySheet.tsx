@@ -1,47 +1,64 @@
 import React from 'react'
-import { menLevel2 } from '../../../data/category/level two/menLevel2';
-import { menLevel3} from '../../../data/category/level three/menLevel3';
+import { homeLivingLevel2, kidsLevel2, menLevel2, personalCareLevel2, womenLevel2, zeroWasteLevel2 } from '../../../data/category/level two/Level2';
+import { homeLivingLevel3, kidsLevel3, menLevel3, personalCareLevel3, womenLevel3, zeroWasteLevel3} from '../../../data/category/level three/Level3';
 import { Box, dividerClasses } from '@mui/material';
 import zIndex from '@mui/material/styles/zIndex';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from 'State/Store';
+
 
 const categoryTwo:{[key:string]:any[]} = {
     men:menLevel2,
+    women: womenLevel2,
+    home_living: homeLivingLevel2,
+    personal_care: personalCareLevel2,
+    zero_waste: zeroWasteLevel2,
+    kids: kidsLevel2
 }
 
 const categoryThree:{[key:string]:any[]} = {
     men: menLevel3,
+    women: womenLevel3,
+    home_living: homeLivingLevel3,
+    personal_care: personalCareLevel3,
+    zero_waste: zeroWasteLevel3,
+    kids: kidsLevel3
 }
 
-const CategorySheet = ({selectedCategory}:any) => {
-    const navigate = useNavigate();
+const CategorySheet = ({ selectedCategory }: { selectedCategory: string }) => {
+  const { categories } = useAppSelector((state) => state.category);
+  const navigate = useNavigate();
+  
 
-    const childCategory = (category: any, parentCategoryId: any) => {
-        return category.filter((child: any) => child.parentCategoryId == parentCategoryId)
-    }
-
+  const subCategories = categories.filter(c => c.parentCategoryId === selectedCategory);
+  
   return (
-    <Box sx={{ zIndex: 2 }} className='bg-white shadow-lg lg:h-[500px] overflow-y-auto'>
-        <div className='flex text-sm flex-wrap'>
-            {
-                categoryTwo[selectedCategory]?.map((item:any, index) => 
-                <div className={`p-8 lg:w-[20%] ${index % 2 === 0 ? "bg-slate-50" : "bg-white"}`}>
-                    <p className='text-primary mb-5 font-semibold'>{item.name}</p>
-                    <ul className='space-y-3'>
-                        {
-                            childCategory(categoryThree[selectedCategory], item.categoryId).map((item: any) =>
-                            <div>
-                                <li onClick={() => navigate("/products/"+item.categoryId)} key={item.name} className='hover:text-primary cursor-pointer'>
-                                    {item.name}
-                                </li>   
-                            </div>)
-                        }
-                    </ul>
-                </div>)
-            }
+    <div className="flex p-4 bg-white shadow-lg">
+      {subCategories.map((sub) => (
+        <div key={sub.id} className="p-4 w-1/4">
+          <h3
+            className="font-semibold text-primary cursor-pointer hover:underline"
+            onClick={() => navigate(`/products?category=${sub.categoryId}`)}
+          >
+            {sub.name}
+          </h3>
+          <ul className="mt-2 space-y-1">
+            {categories
+              .filter(c => c.parentCategoryId === sub.categoryId)
+              .map(bottom => (
+                <li
+                  key={bottom.id}
+                  className="cursor-pointer hover:text-green-600"
+                  onClick={() => navigate(`/products?category=${bottom.categoryId}`)}
+                >
+                  {bottom.name}
+                </li>
+              ))}
+          </ul>
         </div>
-    </Box>
-  )
-}
+      ))}
+    </div>
+  );
+};
 
 export default CategorySheet
