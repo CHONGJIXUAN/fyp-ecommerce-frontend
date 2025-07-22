@@ -28,7 +28,6 @@ const Navbar = () => {
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
 
-
     useEffect(() => {
         dispatch(fetchCategories());
     }, [dispatch]);
@@ -44,6 +43,13 @@ const Navbar = () => {
     const level1Categories = categories.filter(c => c.level === 1);
     const level2Categories = categories.filter(c => c.level === 2);
     const level3Categories = categories.filter(c => c.level === 3);
+
+    if (
+    pathname.startsWith("/seller") || pathname.startsWith("/admin") ||
+    (auth.user && auth.user.role && auth.user.role !== "ROLE_CUSTOMER")
+  ) {
+    return null;
+  }
 
   return (
     <>

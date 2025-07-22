@@ -41,6 +41,11 @@ const Profile = () => {
     },
   });
 
+  useEffect(() => {
+    const jwt = localStorage.getItem("sellerJwt") || "";
+    dispatch(fetchSellerProfile(jwt));
+  }, [dispatch]);
+
   return (
     <Box className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6">
       <Typography variant="h5" className="font-bold text-gray-700">

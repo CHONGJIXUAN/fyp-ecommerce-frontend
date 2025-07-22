@@ -12,14 +12,14 @@ const SellerRoutes = () => {
   return (
     <div>
         <Routes>
-            <Route path='/' element={<Dashboard />}></Route>
-            <Route path='/products' element={<Products />}></Route>
-            <Route path='/add-product' element={<AddProduct />}></Route>
-            <Route path='/orders' element={<Orders />}></Route>
-            <Route path='/account' element={<Profile />}></Route>
-            <Route path='/payment' element={<Payment />}></Route>
-            <Route path='/transaction' element={<Transaction />}></Route>
-            
+            <Route index element={<Dashboard />}></Route>
+            <Route path='products' element={<Products />}></Route>
+            <Route path='add-product' element={<AddProduct />}></Route>
+            <Route path='orders' element={<Orders />}></Route>
+            <Route path='account' element={<Profile />}></Route>
+            <Route path='payment' element={<Payment />}></Route>
+            <Route path='transaction' element={<Transaction />}></Route>
+
         </Routes>
     </div>
   )

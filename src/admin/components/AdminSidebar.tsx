@@ -36,12 +36,12 @@ const menu = [
     //     icon: <PersonIcon className='text-primary' />,
     //     activeIcon: <PersonIcon className='text-white' />,
     // },
-    {
-        name: 'Home Page',
-        path: "/admin/home-grid",
-        icon: <HomeIcon className='text-primary' />,
-        activeIcon: <HomeIcon className='text-white' />,
-    },
+    // {
+    //     name: 'Home Page',
+    //     path: "/admin/home-grid",
+    //     icon: <HomeIcon className='text-primary' />,
+    //     activeIcon: <HomeIcon className='text-white' />,
+    // },
     // {
     //     name: 'Electronics Category',
     //     path: "/admin/electronics-category",
@@ -54,12 +54,12 @@ const menu = [
     //     icon: <CategoryIcon className='text-primary' />,
     //     activeIcon: <CategoryIcon className='text-white' />,
     // },
-    {
-        name: 'Deals',
-        path: "/admin/deals",
-        icon: <LocalOfferIcon className='text-primary' />,
-        activeIcon: <LocalOfferIcon className='text-white' />,
-    },
+    // {
+    //     name: 'Deals',
+    //     path: "/admin/deals",
+    //     icon: <LocalOfferIcon className='text-primary' />,
+    //     activeIcon: <LocalOfferIcon className='text-white' />,
+    // },
 ];
 
 const menu2 = [

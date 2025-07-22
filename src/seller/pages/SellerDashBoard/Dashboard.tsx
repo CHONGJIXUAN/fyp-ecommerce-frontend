@@ -43,15 +43,9 @@ const Dashboard = () => {
     const jwt = localStorage.getItem("sellerJwt") || "";
     if (jwt) {
       dispatch(fetchSellerOrders(jwt));
+      dispatch(fetchTransactionsBySeller(jwt));
     }
   }, [dispatch]);
-
-  useEffect(() => {
-      const jwt = localStorage.getItem("sellerJwt");
-      if (jwt) {
-        dispatch(fetchTransactionsBySeller(jwt));
-      }
-    }, []);
 
   const totalSales = orders.reduce((sum, order) => sum + (order.totalSellingPrice || 0), 0);
   const pendingOrders = orders.filter((o) => o.orderStatus === "PENDING").length;

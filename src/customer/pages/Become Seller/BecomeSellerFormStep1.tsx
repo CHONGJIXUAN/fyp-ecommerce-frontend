@@ -1,5 +1,16 @@
 import { Box, TextField } from '@mui/material'
 import React from 'react'
+import * as Yup from "yup";
+
+const validationSchema = Yup.object({
+  mobile: Yup.string()
+    .required("Mobile is required")
+    .matches(/^\d+$/, "Only numbers are allowed")
+    .min(8, "Mobile number must be at least 8 digits"),
+  SSM: Yup.string()
+    .required("SSM number is required")
+    .matches(/^\d+$/, "Only numbers are allowed"),
+});
 
 const BecomeSellerFormStep1 = ({formik}:any) => {
   return (

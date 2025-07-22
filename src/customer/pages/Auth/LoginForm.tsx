@@ -39,7 +39,16 @@ const LoginForm = () => {
 
           if (signing.fulfilled.match(result)) {
             console.log("Login successful!", result.payload);
-            navigate("/");
+
+             if (auth.user && auth.user.role) {
+              if (auth.user.role === "ROLE_ADMIN") {
+                navigate("/admin");
+              } else {
+                navigate("/");
+              }
+            }
+
+
           } else {
             console.error("Login failed:", result.payload);
             alert("Invalid credentials or OTP.");

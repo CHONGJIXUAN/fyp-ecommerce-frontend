@@ -19,7 +19,7 @@ export const signing = createAsyncThunk<any, any>("/auth/signing",
             const response = await api.post("/auth/signing", loginRequest)
             console.log("Login otp:", response.data);
             localStorage.setItem("jwt", response.data.jwt);
-            return response.data.wt;
+            return response.data.jwt;
         } catch (error) {
             console.log("Error fetching otp:", error);
         }

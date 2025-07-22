@@ -14,6 +14,8 @@ import { useAppDispatch, useAppSelector } from "State/Store";
 import { fetchAddresses } from "State/customer/addressSlice";
 import { createOrder } from "State/customer/orderSlice";
 import { api } from "config/Api";
+import { fetchUserCart } from "State/customer/cartSlice";
+import { useNavigate } from "react-router-dom";
 
 const Checkout: React.FC = () => {
   const style = {
@@ -44,7 +46,7 @@ const Checkout: React.FC = () => {
   );
   const [open, setOpen] = useState(false);
   const [paymentGateway, setPaymentGateway] = useState("STRIPE");
-
+  const navigate = useNavigate();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -59,9 +61,20 @@ const Checkout: React.FC = () => {
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    dispatch(fetchUserCart(localStorage.getItem("jwt") || ""));
+  }, [dispatch]);
+
   const handleCheckout = async () => {
     if (!selectedAddressId) {
       alert("Please select an address before proceeding.");
+      return;
+    }
+
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) {
+      alert("Please login first");
+      navigate("/login");
       return;
     }
 
@@ -71,6 +84,8 @@ const Checkout: React.FC = () => {
         headers: { Authorization: `Bearer ${jwt}` },
         params: { addressId: selectedAddressId, paymentMethod: paymentGateway },
       });
+
+      window.location.href = response.data.paymentLink;
 
       console.log("Payment Response:", response.data);
 

@@ -21,6 +21,7 @@ import { fetchSellerProfile } from 'State/seller/sellerSlice';
 import Auth from 'customer/pages/Auth/Auth';
 import { fetchUserProfile } from 'State/AuthSlice';
 import PaymentSuccess from 'customer/pages/PaymentSuccess';
+import PaymentFailed from 'customer/pages/PaymentFailed';
 import Wishlist from 'customer/pages/Wishlist/Wishlist';
 import { createHomeCategories } from 'State/customer/customerSlice';
 import { homeCategories } from 'data/HomeCategories';
@@ -37,11 +38,11 @@ function App() {
     dispatch(createHomeCategories(homeCategories))
   }, [])
 
-  useEffect(() => {
-    if(seller.profile){
-      navigate("/seller")
-    }
-  }, [seller.profile]);
+  // useEffect(() => {
+  //   if(seller.profile){
+  //     navigate("/seller")
+  //   }
+  // }, [seller.profile]);
 
   useEffect(() => {
     dispatch(fetchUserProfile({jwt: auth.jwt || localStorage.getItem("jwt")}))
@@ -61,6 +62,7 @@ function App() {
             <Route path="/wishlist" element={<Wishlist/>} />
             <Route path="/checkout" element={<Checkout/>} />
             <Route path="/payment-success/:orderId" element={<PaymentSuccess/>} />
+            <Route path="/payment-cancel" element={<PaymentFailed/>} />
             <Route path="/account/*" element={<Account/>} />
             <Route path="/become-seller" element={<BecomeSeller/>} />
             <Route path="/seller/*" element={<SellerDashBoard/>} />

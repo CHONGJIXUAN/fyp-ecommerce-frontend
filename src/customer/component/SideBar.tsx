@@ -22,9 +22,9 @@ const SideBar = ({menu, menu2, toggleSideBar}:SideBarProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const handleLogout = () => [
+  const handleLogout = () => {
     dispatch(logout(navigate))
-  ]
+  }
     
   return (
     <div className='h-full'>

@@ -11,86 +11,128 @@ const BecomeSellerFormStep2 = ({formik}: BecomeSellerFormStep2Props) => {
         <>
             <Grid container spacing={3}>
                 <Grid size={{xs:12}}>
-                    <TextField 
+                    <TextField
                         fullWidth
-                        name='name'
+                        name="pickupAddress.name"
                         label="Name"
-                        value={formik.values.name}
+                        value={formik.values.pickupAddress.name}
                         onChange={formik.handleChange}
-                        error={formik.touched.name && Boolean(formik.errors.name)}
-                        helperText={formik.touched.name && formik.errors.name}
+                        error={
+                        formik.touched.pickupAddress?.name &&
+                        Boolean(formik.errors.pickupAddress?.name)
+                        }
+                        helperText={
+                        formik.touched.pickupAddress?.name &&
+                        formik.errors.pickupAddress?.name
+                        }
                     />
                 </Grid>
 
                 <Grid size={{xs:6}}>
-                    <TextField 
+                     <TextField
                         fullWidth
-                        name='mobile'
+                        name="pickupAddress.mobile"
                         label="Mobile"
-                        value={formik.values.mobile}
+                        value={formik.values.pickupAddress.mobile}
                         onChange={formik.handleChange}
-                        error={formik.touched.mobile && Boolean(formik.errors.mobile)}
-                        helperText={formik.touched.mobile && formik.errors.mobile}
+                        error={
+                        formik.touched.pickupAddress?.mobile &&
+                        Boolean(formik.errors.pickupAddress?.mobile)
+                        }
+                        helperText={
+                        formik.touched.pickupAddress?.mobile &&
+                        formik.errors.pickupAddress?.mobile
+                        }
                     />
                 </Grid>
 
                 <Grid size={{xs:6}}>
-                    <TextField 
+                     <TextField
                         fullWidth
-                        name='postalCode'
+                        name="pickupAddress.postCode"
                         label="Postal Code"
-                        value={formik.values.postalCode}
+                        value={formik.values.pickupAddress.postCode}
                         onChange={formik.handleChange}
-                        error={formik.touched.postalCode && Boolean(formik.errors.postalCode)}
-                        helperText={formik.touched.postalCode && formik.errors.postalCode}
+                        error={
+                        formik.touched.pickupAddress?.postCode &&
+                        Boolean(formik.errors.pickupAddress?.postCode)
+                        }
+                        helperText={
+                        formik.touched.pickupAddress?.postCode &&
+                        formik.errors.pickupAddress?.postCode
+                        }
                     />
                 </Grid>
 
                 <Grid size={{xs:12}}>
-                    <TextField 
+                    <TextField
                         fullWidth
-                        name='address'
+                        name="pickupAddress.fullAddress"
                         label="Address"
-                        value={formik.values.address}
+                        value={formik.values.pickupAddress.fullAddress}
                         onChange={formik.handleChange}
-                        error={formik.touched.address && Boolean(formik.errors.address)}
-                        helperText={formik.touched.address && formik.errors.address}
+                        error={
+                        formik.touched.pickupAddress?.fullAddress &&
+                        Boolean(formik.errors.pickupAddress?.fullAddress)
+                        }
+                        helperText={
+                        formik.touched.pickupAddress?.fullAddress &&
+                        formik.errors.pickupAddress?.fullAddress
+                        }
                     />
                 </Grid>
 
                 <Grid size={{xs:12}}>
-                    <TextField 
+                    <TextField
                         fullWidth
-                        name='locality'
+                        name="pickupAddress.locality"
                         label="Locality"
-                        value={formik.values.locality}
+                        value={formik.values.pickupAddress.locality}
                         onChange={formik.handleChange}
-                        error={formik.touched.locality && Boolean(formik.errors.locality)}
-                        helperText={formik.touched.locality && formik.errors.locality}
+                        error={
+                        formik.touched.pickupAddress?.locality &&
+                        Boolean(formik.errors.pickupAddress?.locality)
+                        }
+                        helperText={
+                        formik.touched.pickupAddress?.locality &&
+                        formik.errors.pickupAddress?.locality
+                        }
                     />
                 </Grid>
 
                 <Grid size={{xs:6}}>
-                    <TextField 
+                    <TextField
                         fullWidth
-                        name='city'
+                        name="pickupAddress.city"
                         label="City"
-                        value={formik.values.city}
+                        value={formik.values.pickupAddress.city}
                         onChange={formik.handleChange}
-                        error={formik.touched.city && Boolean(formik.errors.city)}
-                        helperText={formik.touched.city && formik.errors.city}
+                        error={
+                        formik.touched.pickupAddress?.city &&
+                        Boolean(formik.errors.pickupAddress?.city)
+                        }
+                        helperText={
+                        formik.touched.pickupAddress?.city &&
+                        formik.errors.pickupAddress?.city
+                        }
                     />
                 </Grid>
 
                 <Grid size={{xs:6}}>
-                    <TextField 
+                    <TextField
                         fullWidth
-                        name='state'
+                        name="pickupAddress.state"
                         label="State"
-                        value={formik.values.state}
+                        value={formik.values.pickupAddress.state}
                         onChange={formik.handleChange}
-                        error={formik.touched.state && Boolean(formik.errors.state)}
-                        helperText={formik.touched.state && formik.errors.state}
+                        error={
+                        formik.touched.pickupAddress?.state &&
+                        Boolean(formik.errors.pickupAddress?.state)
+                        }
+                        helperText={
+                        formik.touched.pickupAddress?.state &&
+                        formik.errors.pickupAddress?.state
+                        }
                     />
                 </Grid>
             </Grid>
