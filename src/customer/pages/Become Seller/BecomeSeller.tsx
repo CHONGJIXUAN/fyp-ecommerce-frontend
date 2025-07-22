@@ -11,7 +11,8 @@ const BecomeSeller = () => {
   return (
     <div className='grid md:gap-10 grid-cols-3 min-h-screen'>
         <section className='lg:col-span-1 md:col-span-2 col-span-3 p-10 shadow-lg rounded-b-md'>
-            {!isLogin ? <SellerAccountForm /> : <SellerLoginForm />}
+            {!isLogin ? <SellerAccountForm onRegisterSuccess={() => setIsLogin(true)} /> 
+            : <SellerLoginForm />}
 
             <div className='mt-10 psace-y-2'>
                 <h1 className='text-centertext-sm font-medium'>have account</h1>

@@ -123,10 +123,8 @@ const cartSlice = createSlice({
       state.loading = true;
       state.error = null;
     });
-    builder.addCase(fetchUserCart.fulfilled, (state, action: PayloadAction<Cart>) => {
+    builder.addCase(fetchUserCart.fulfilled, (state, action) => {
       state.cart = action.payload;
-      state.loading = false;
-      state.error = null;
     });
     builder.addCase(fetchUserCart.rejected, (state, action) => {
       state.loading = false;
@@ -187,10 +185,9 @@ const cartSlice = createSlice({
     builder.addCase(updateCartItem.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload as string;
-    });  
+    })
     builder.addCase(applyCoupon.fulfilled, (state, action) => {
-        state.loading = false;
-        state.cart = action.payload;
+      state.cart = action.payload; 
     })
   }
 });

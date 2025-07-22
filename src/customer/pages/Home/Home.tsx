@@ -16,11 +16,12 @@ import ProductCard from '../Product/ProductCard'
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
+  
   const { products, loading, error } = useAppSelector((state) => state.product);
 
+  
   useEffect(() => {
-    dispatch(fetchAllProducts({})); // ✅ Fetch all products without filter
+    dispatch(fetchAllProducts({})); 
   }, [dispatch]);
 
   return (
@@ -28,7 +29,7 @@ const Home = () => {
       {/* ✅ Hero Banner */}
       <section className="relative h-[300px] lg:h-[500px] w-full">
         <img
-          src="https://img.freepik.com/free-photo/eco-friendly-shopping-bags_23-2148596558.jpg"
+          src="https://t4.ftcdn.net/jpg/02/16/47/35/360_F_216473592_NefHePTpMfvYMNjD3UQTUVJy7DFPwqKA.jpg"
           alt="Eco Shopping Banner"
           className="w-full h-full object-cover"
         />
@@ -83,7 +84,7 @@ const Home = () => {
       <section className="lg:px-20 relative h-[250px] lg:h-[350px] mt-10">
         <img
           className="w-full h-full object-cover rounded-lg"
-          src="https://static.vecteezy.com/system/resources/thumbnails/004/299/830/small/shopping-online-on-phone-with-podium-paper-art-modern-pink-background-gifts-box-illustration-free-vector.jpg"
+          src="https://static.vecteezy.com/system/resources/thumbnails/021/609/331/small/golden-business-promotion-decoration-with-shopping-bag-and-podium-for-sale-banner-with-space-for-text-free-vector.jpg"
           alt="Become Seller"
         />
         <div className="absolute top-1/2 left-6 lg:left-40 transform -translate-y-1/2 text-white font-semibold lg:text-4xl space-y-3">

@@ -43,7 +43,7 @@ const menu = [
     },
     // {
     //     name: "Account",
-    //     path: "/seller/account",
+    //     path: "/seller/profile",
     //     icon: <ReceiptIcon className="text-primary" />,
     //     activeIcon: <ReceiptIcon className="text-white" />,
     // }

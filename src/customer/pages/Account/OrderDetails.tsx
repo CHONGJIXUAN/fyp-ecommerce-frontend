@@ -32,7 +32,10 @@ const OrderDetails = () => {
                 <p><strong>Size:</strong>{orderItem?.size || currentOrder?.orderItems?.[0]?.size}</p>
             </div>
             <div>
-                <Button onClick={() => navigate(`/reviews/${5}/create`)}>
+                <Button
+                    variant="outlined"
+                    onClick={() => navigate(`/reviews/${currentOrder?.orderItems?.[0]?.product?.id}`)}
+                >
                     Write Review
                 </Button>
             </div>

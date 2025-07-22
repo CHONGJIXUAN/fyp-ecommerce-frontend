@@ -1,5 +1,7 @@
 import { TextField } from '@mui/material'
+import { api } from 'config/Api';
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 interface BecomeSellerFormStep2Props {
     formik: any;
@@ -42,6 +44,7 @@ const BecomeSellerFormStep4 = ({formik}: BecomeSellerFormStep2Props) => {
             fullWidth
             name='password'
             label="Password"
+            type='password'
             value={formik.values.password}
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}

@@ -1,14 +1,16 @@
 import { Button, TextField } from '@mui/material'
 import { useFormik } from 'formik'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { sendLoginSignupOtp, signing } from 'State/AuthSlice'
 import { sellerLogin } from 'State/seller/SellerAuthSlice'
-import { useAppDispatch } from 'State/Store'
+import { useAppDispatch, useAppSelector } from 'State/Store'
 
 const SellerLoginForm = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const { loading } = useAppSelector((state) => state.auth);
+  const [otpError, setOtpError] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -24,10 +26,23 @@ const SellerLoginForm = () => {
       }
       return errors
     },
-    onSubmit: (values) => {
-      console.log('Form submitted:', values)
-      dispatch(sellerLogin({email: values.email, otp: values.otp }))
-      navigate("/become-seller")
+    onSubmit: async (values) => {
+      if (!values.otp || values.otp.length !== 6) {
+        setOtpError("Please enter a valid 6-digit OTP.");
+        return;
+      }
+
+      try {
+        const result = await dispatch(
+          sellerLogin({ email: values.email, otp: values.otp })
+        ).unwrap();
+
+        console.log("Login successful!", result);
+        navigate("/seller");
+      } catch (error: any) {
+        console.error("Login failed:", error);
+        setOtpError("Invalid OTP. Please try again."); 
+      }
     },
   })
 
@@ -69,6 +84,8 @@ const SellerLoginForm = () => {
             />
           </div>
         }
+
+        {otpError && <p style={{ color: "red", fontSize: "14px" }}>{otpError}</p>}
         <Button onClick={handleSendOtp} fullWidth variant='contained' sx={{py: "11px"}}>
           Send Otp
         </Button>

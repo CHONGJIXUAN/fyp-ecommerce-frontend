@@ -9,62 +9,115 @@ import PricingCard from './PricingCard';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'State/Store';
 import { fetchUserCart } from 'State/customer/cartSlice';
+import { applyCoupon } from 'State/customer/couponSlice';
 
 
 const Cart = () => {
   const [couponCode, setCouponCode] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [isError, setIsError] = useState(false);
   const navigate = useNavigate();
-  const handleChange = (e:any) => {
-    setCouponCode(e.target.value);
-  }
   const dispatch = useAppDispatch();
-  const {cart} = useAppSelector(store => store);
+  const { cart } = useAppSelector((store) => store.cart);
 
   useEffect(() => {
-    dispatch(fetchUserCart(localStorage.getItem("jwt") || "")) 
-  },[dispatch])
+    dispatch(fetchUserCart(localStorage.getItem("jwt") || ""));
+  }, [dispatch]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCouponCode(e.target.value);
+  };
+
+  const handleApplyCoupon = () => {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) return alert("Please login first");
+
+    if (!couponCode.trim()) {
+      setMessage("Please enter a coupon code");
+      setIsError(true);
+      return;
+    }
+
+    dispatch(
+      applyCoupon({
+        apply: true,
+        code: couponCode,
+        orderValue: cart?.totalSellingPrice || 0,
+        jwt,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        setMessage(`Coupon "${couponCode}" applied successfully!`);
+        setIsError(false);
+      })
+      .catch((err: any) => {
+        setMessage(err.error || "Failed to apply coupon.");
+        setIsError(true);
+      });
+  };
+
 
   return (
-    <div className='pt-10 px-5 sm:px-10 md:px-60 min-h-screen'>
-        <div className='grid grid-cols-1 lg:grid-cols-3 gap-5'>
-            <div className='cartItemSection lg:col-span-2 space-y-3'>
-                {cart.cart?.cartItems.map((item) => <CartItem item={item} />)}
-            </div>
-            <div className='col-span-1 text-sm space-y-3'>
-                <div className='border rounded-md px-5 py-3 space-y-5'>
-                    <div className='flex gap-3 text-sm items-center'>
-                        <LocalOfferIcon sx={{ color: teal[600], fontSize:"17px" }} />
-                        <span>Apply Copupons</span>
-                    </div>
-                    {true ? 
-                    <div className='flex justify-between items-center'>
-                        <TextField onChange={handleChange} id="outlined-basic" placeholder='Coupon Code' size='small' variant="outlined" />
-                        <Button size='small'>Apply</Button>
-                    </div>
-                    :
-                    <div className='flex'>
-                        <div className='p-1 pl-5 pr-3 rounded-md flex gap-2 items-center'>
-                            <span className=''>Applied</span>
-                            <IconButton size='small'>
-                                <Close className='text-red-600' />
-                            </IconButton>
-                        </div>
-                    </div>}
-                </div>
-                <div className='border rounded-md'>
-                      <PricingCard />
-                      <div className='p-5'>
-                        <Button 
-                        onClick={() => navigate("/checkout")} 
-                        sx={{py:"11px"}} 
-                        variant='contained' className='w-full'
-                        disabled={cart.cart?.cartItems.length === 0}>
-                          Checkout
-                        </Button>
-                      </div>
-                </div>
-            </div>
+    <div className="pt-10 px-5 sm:px-10 md:px-60 min-h-screen">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Cart Items */}
+        <div className="cartItemSection lg:col-span-2 space-y-3">
+          {cart?.cartItems.length ? (
+            cart.cartItems.map((item) => <CartItem key={item.id} item={item} />)
+          ) : (
+            <p>Your cart is empty.</p>
+          )}
         </div>
+
+        {/* Coupon & Pricing */}
+        <div className="col-span-1 text-sm space-y-3">
+          <div className="border rounded-md px-5 py-3 space-y-5">
+            <div className="flex gap-3 text-sm items-center">
+              <LocalOfferIcon sx={{ color: teal[600], fontSize: "17px" }} />
+              <span>Apply Coupons</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <TextField
+                onChange={handleChange}
+                id="outlined-basic"
+                placeholder="Coupon Code"
+                size="small"
+                variant="outlined"
+                value={couponCode}
+              />
+              <Button size="small" onClick={handleApplyCoupon}>
+                Apply
+              </Button>
+            </div>
+            {message && (
+              <p
+                className={`text-sm mt-2 ${
+                  isError ? "text-red-600" : "text-green-600"
+                }`}
+              >
+                {message}
+              </p>
+            )}
+          </div>
+
+          {/* Pricing Summary */}
+          <div className="border rounded-md">
+            <PricingCard />
+            <div className="p-5">
+              <Button
+                onClick={() => navigate("/checkout")}
+                sx={{ py: "11px" }}
+                variant="contained"
+                className="w-full"
+                disabled={!cart?.cartItems.length}
+              >
+                Checkout
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

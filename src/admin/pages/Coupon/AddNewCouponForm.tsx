@@ -40,9 +40,9 @@ const AddNewCouponForm: React.FC = () => {
         .test("is-after", "End date must be after start date", function (value) {
           return value && value > this.parent.validityStartDate;
         }),
-      minimumOrderValue: Yup.number()
-        .required("Minimum order value is required")
-        .min(0, "Cannot be negative"),
+      // minimumOrderValue: Yup.number()
+      //   .required("Minimum order value is required")
+      //   .min(0, "Cannot be negative"),
     }),
     onSubmit: (values) => {
       const formattedValues = {
@@ -129,7 +129,7 @@ const AddNewCouponForm: React.FC = () => {
             </Grid>
 
             {/* Minimum Order Value */}
-            <Grid size={{xs:12}}>
+            {/* <Grid size={{xs:12}}>
               <TextField
                 fullWidth
                 name="minimumOrderValue"
@@ -146,7 +146,7 @@ const AddNewCouponForm: React.FC = () => {
                   formik.errors.minimumOrderValue
                 }
               />
-            </Grid>
+            </Grid> */}
 
             {/* Submit Button */}
             <Grid size={{xs:12}}>

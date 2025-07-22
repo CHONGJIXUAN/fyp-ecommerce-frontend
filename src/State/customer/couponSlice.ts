@@ -78,29 +78,19 @@ export const updateCoupon = createAsyncThunk(
 
 export const applyCoupon = createAsyncThunk(
   "coupon/applyCoupon",
-  async (
-    {
-      apply,
-      code,
-      orderValue,
-      jwt,
-    }: { apply: boolean; code: string; orderValue: number; jwt: string },
-    { rejectWithValue }
-  ) => {
+  async ({ apply, code, orderValue, jwt }: { apply: boolean; code: string; orderValue: number; jwt: string }, { rejectWithValue }) => {
     try {
-      const response = await api.post(
-        `/coupon/apply?apply=${apply}&code=${code}&orderValue=${orderValue}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${jwt}` },
-        }
-      );
-      return response.data; // Updated cart
+      const response = await api.post(`/coupon/apply?apply=${apply}&code=${code}&orderValue=${orderValue}`, {}, {
+        headers: { Authorization: `Bearer ${jwt}` }
+      });
+      return response.data; 
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Failed to apply coupon");
     }
   }
 );
+
+
 
 const couponSlice = createSlice({
   name: "coupon",
@@ -126,6 +116,10 @@ const couponSlice = createSlice({
       })
       .addCase(deleteCoupon.fulfilled, (state, action) => {
         state.coupons = state.coupons.filter((c) => c.id !== action.payload);
+      })
+      .addCase(applyCoupon.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       });
   },
 });
