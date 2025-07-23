@@ -2,6 +2,7 @@ import { Button } from '@mui/material'
 import React, { use, useEffect } from 'react'
 import {useLocation, useNavigate, useParams } from 'react-router-dom'
 import { fetchUserCart, resetCartState } from 'State/customer/cartSlice';
+import { clearCartCoupon } from 'State/customer/couponSlice';
 import { paymentSuccess } from 'State/customer/orderSlice';
 import { useAppDispatch } from 'State/Store';
 
@@ -27,6 +28,7 @@ const PaymentSuccess = () => {
                 dispatch(resetCartState());
                 // ✅ Re-fetch updated cart (should be empty now)
                 dispatch(fetchUserCart(jwt));
+                dispatch(clearCartCoupon()); 
             });
     }
 }, [dispatch]);
@@ -45,4 +47,4 @@ const PaymentSuccess = () => {
   )
 }
 
-export default PaymentSuccess
+export default PaymentSuccess;

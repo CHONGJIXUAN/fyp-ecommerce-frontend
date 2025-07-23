@@ -69,7 +69,7 @@ export default function OrderTable() {
   };
 
   const handleUpdateOrderStatus = (orderId: number, orderStatus: any) => () => {
-    dispatch(updateOrderStatus({jwt: localStorage.getItem("sellerjwt") || "", orderId, orderStatus}))
+    dispatch(updateOrderStatus({jwt: localStorage.getItem("sellerJwt") || "", orderId, orderStatus}))
   }
 
   return (
@@ -106,10 +106,10 @@ export default function OrderTable() {
               </StyledTableCell>
               <StyledTableCell align="right">
                  <div className='flex flex-col gap-y-2'>
-                    <h1>{item.shippingAddress.name}</h1>
-                    <h1>{item.shippingAddress.address}, {item.shippingAddress.city}</h1>
-                    <h1>{item.shippingAddress.state} - {item.shippingAddress.postalCode}</h1>
-                    <h1><strong>Mobile: </strong>{item.shippingAddress.mobile}</h1>
+                    <h1>{item.shippingAddress?.name || "N/A"}</h1>
+                    <h1>{item.shippingAddress?.address || "N/A"}, {item.shippingAddress?.city || "N/A"}</h1>
+                    <h1>{item.shippingAddress?.state || "N/A"} - {item.shippingAddress?.postalCode || "N/A"}</h1>
+                    <h1><strong>Mobile: </strong>{item.shippingAddress?.mobile || "N/A"}</h1>
                  </div>
               </StyledTableCell>
               <StyledTableCell align="right">

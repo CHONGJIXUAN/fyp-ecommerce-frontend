@@ -1,5 +1,6 @@
 import AdminSidebar from 'admin/components/AdminSidebar'
 import React, { use, useEffect } from 'react'
+import { useNavigate } from 'react-router'
 import AdminRoutes from 'Routes/AdminRoutes'
 import { fetchHomeCategories } from 'State/admin/adminSlice'
 import { useAppDispatch } from 'State/Store'
@@ -7,8 +8,16 @@ import { useAppDispatch } from 'State/Store'
 const AdminDashboard = () => {
   const toggleSideBar = () => {}
   const dispatch = useAppDispatch()
+  const navigate = useNavigate();
 
   useEffect(() => {
+
+    const jwt = localStorage.getItem("jwt");
+
+    if (!jwt) {
+      navigate("/login"); // Redirect if token is missing
+      return; // Stop execution
+    }
     dispatch(fetchHomeCategories())
   },[])
 
