@@ -16,11 +16,15 @@ interface CouponState {
   coupons: Coupon[];
   loading: boolean;
   error: string | null;
+  couponCode: string | null;
+  discount: number | null;
 }
 
 const initialState: CouponState = {
   coupons: [],
   loading: false,
+  couponCode: null,
+  discount: 0,
   error: null,
 };
 
@@ -95,7 +99,12 @@ export const applyCoupon = createAsyncThunk(
 const couponSlice = createSlice({
   name: "coupon",
   initialState,
-  reducers: {},
+  reducers: {
+    clearCartCoupon: (state) => {
+      state.couponCode = null;
+      state.discount = 0;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCoupons.pending, (state) => {
@@ -120,9 +129,20 @@ const couponSlice = createSlice({
       .addCase(applyCoupon.pending, (state) => {
         state.loading = true;
         state.error = null;
+      })
+      .addCase(applyCoupon.fulfilled, (state, action) => {
+        state.loading = false;
+        state.couponCode = action.meta.arg.code; 
+        state.discount = action.payload.discount || 0; 
+      })
+      .addCase(applyCoupon.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
+
+export const { clearCartCoupon } = couponSlice.actions;
 
 
 export default couponSlice.reducer;

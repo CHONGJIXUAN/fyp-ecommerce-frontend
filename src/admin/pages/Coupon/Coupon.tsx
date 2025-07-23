@@ -84,7 +84,7 @@ const Coupon = () => {
             <TableRow>
               <TableCell>Code</TableCell>
               <TableCell>Discount (%)</TableCell>
-              {/* <TableCell>Min Order Value</TableCell> */}
+              <TableCell>Min Order Value</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Edit</TableCell>
               <TableCell>Delete</TableCell>
@@ -95,7 +95,7 @@ const Coupon = () => {
               <TableRow key={coupon.id}>
                 <TableCell>{coupon.code}</TableCell>
                 <TableCell>{coupon.discountPercentage}</TableCell>
-                {/* <TableCell>{coupon.minimumOrderValue}</TableCell> */}
+                <TableCell>{coupon.minimumOrderValue}</TableCell>
                 <TableCell>{coupon.status == "ACTIVE" ? "Active" : "Inactive"}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleEditClick(coupon)} color="primary">

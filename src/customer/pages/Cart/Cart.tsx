@@ -16,6 +16,7 @@ const Cart = () => {
   const [couponCode, setCouponCode] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { cart } = useAppSelector((store) => store.cart);
@@ -30,31 +31,47 @@ const Cart = () => {
 
   const handleApplyCoupon = () => {
     const jwt = localStorage.getItem("jwt");
-    if (!jwt) return alert("Please login first");
+  if (!jwt) {
+    alert("Please login first");
+    return;
+  }
 
-    if (!couponCode.trim()) {
-      setMessage("Please enter a coupon code");
+  const normalizedCode = couponCode.trim().toUpperCase();
+  if (!normalizedCode) {
+    setMessage("Please enter a coupon code");
+    setIsError(true);
+    return;
+  }
+
+  setLoading(true); // ✅ Optional: Add a loading state for UX
+
+  dispatch(
+    applyCoupon({
+      apply: true,
+      code: normalizedCode,
+      orderValue: cart?.totalSellingPrice || 0,
+      jwt,
+    })
+  )
+    .unwrap()
+    .then(() => {
+      setMessage(`Coupon "${normalizedCode}" applied successfully!`);
+      setIsError(false);
+
+      // ✅ Refresh cart to update discount info
+      dispatch(fetchUserCart(jwt));
+    })
+    .catch((err: any) => {
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to apply coupon.";
+      setMessage(errorMessage);
       setIsError(true);
-      return;
-    }
-
-    dispatch(
-      applyCoupon({
-        apply: true,
-        code: couponCode,
-        orderValue: cart?.totalSellingPrice || 0,
-        jwt,
-      })
-    )
-      .unwrap()
-      .then(() => {
-        setMessage(`Coupon "${couponCode}" applied successfully!`);
-        setIsError(false);
-      })
-      .catch((err: any) => {
-        setMessage(err.error || "Failed to apply coupon.");
-        setIsError(true);
-      });
+    })
+    .finally(() => {
+      setLoading(false);
+    });
   };
 
 

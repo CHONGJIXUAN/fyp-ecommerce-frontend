@@ -37,9 +37,12 @@ const Wishlist = () => {
                 </Button>
               </div>
             ) : (
+            <>
+              <h1 className='text-2xl font-semibold mb-5'>My Wishlist</h1>
               <div className='pt-10 flex flex-wrap gap-5'>    
-                {wishlist.wishlist?.products.map((item, index) => <WishlistProductCard item={item} /> )}
-            </div>
+                {wishlist.wishlist?.products.map((item, index) => <WishlistProductCard item={item} key={index} /> )}
+              </div>
+            </>
             )}
         </section>
     </div>
